@@ -2,11 +2,13 @@ package com.sdirin.games.testingsnake
 
 import com.sdirin.games.testingsnake.model.CellType
 import com.sdirin.games.testingsnake.model.Direction
+import com.sdirin.games.testingsnake.model.GameState
 import com.sdirin.games.testingsnake.model.SnakeGame
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 
 /**
@@ -172,6 +174,31 @@ class SnakeTest {
         Assert.assertEquals(CellType.SNAKE_BODY, game.findAt(4,4))
     }
 
-    //todo generate new food
-    //todo end game on eating yourself
+    @Test
+    fun newFoodGeneration() {
+        game.createSnake(3,3)
+        game.snakeDirection = Direction.RIGHT
+        game.createFood(4,3)
+        game.tick()
+        Assert.assertEquals(1, game.getFoodCount())
+    }
+
+    @Test
+    fun eatSelf() {
+        var wasCalled = false
+        game.onEndGame = {
+            wasCalled = true
+        }
+        game.createSnake(3,3)
+        game.snakeDirection = Direction.RIGHT
+        game.createFood(4,3)
+        game.tick()
+        game.snakeDirection = Direction.LEFT
+        game.tick()
+        Assert.assertEquals(GameState.GAME_OVER, game.state)
+        assertFailsWith(SnakeGame.GameOverException::class) {
+            game.tick()
+        }
+        assertTrue { wasCalled }
+    }
 }
