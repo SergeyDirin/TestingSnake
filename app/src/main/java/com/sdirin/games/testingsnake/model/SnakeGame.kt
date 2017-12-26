@@ -39,7 +39,7 @@ class SnakeGame(val height: Int, val width: Int) {
             throw FieldSizeException("Field size have to be more that 0")
         }
     }
-    private var field:Array<Array<CellType>> = Array(width) { Array<CellType>(height,{ CellType.EMPTY }) }
+    var field:Array<Array<CellType>> = Array(width) { Array<CellType>(height,{ CellType.EMPTY }) }
 
     lateinit var onEndGame: ()->Unit
 
@@ -75,11 +75,14 @@ class SnakeGame(val height: Int, val width: Int) {
             Direction.DOWN -> y++
             Direction.LEFT -> x--
         }
+        val oldX = x
+        val oldY = y
         x %= field.size
         y %= field[0].size
+        if (x<0) x = field.size - 1
+        if (y<0) y = field[0].size - 1
         snake[0].x = x
         snake[0].y = y
-
 
         if (field[x][y] == CellType.EMPTY) {
             field[snake.last().x][snake.last().y] = CellType.EMPTY

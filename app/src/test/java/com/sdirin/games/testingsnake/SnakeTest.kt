@@ -85,6 +85,15 @@ class SnakeTest {
     }
 
     @Test
+    fun moveSnakeBack() {
+        game.createSnake(0,3)
+        game.snakeDirection = Direction.LEFT
+        game.tick()
+        Assert.assertEquals( CellType.SNAKE_BODY, game.findAt(6,3))
+        Assert.assertEquals(CellType.EMPTY, game.findAt(0,3))
+    }
+
+    @Test
     fun moveOutBorders() {
         game.createSnake(6,3)
         game.snakeDirection = Direction.RIGHT
