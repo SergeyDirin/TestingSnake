@@ -1,6 +1,5 @@
 package com.sdirin.games.testingsnake.model
 
-import android.util.Log
 import java.util.*
 
 /**
@@ -21,9 +20,7 @@ enum class GameState {
 }
 fun ClosedRange<Int>.random() =
         Random().nextInt(endInclusive - start) +  start
-interface IEndGame {
-    fun onEnd(): Unit
-}
+
 class SnakeGame(val height: Int, val width: Int) {
 
     var snakeDirection = Direction.RIGHT
@@ -71,8 +68,7 @@ class SnakeGame(val height: Int, val width: Int) {
         var x = snake[0].x
         var y = snake[0].y
         snake.add(0,Point(x,y))
-        Log.d(TAG,"snakeDirection="+snakeDirection)
-        Log.d(TAG,"snake[0]="+snake[0])
+
         when (snakeDirection) {
             Direction.TOP -> y--
             Direction.RIGHT -> x++
@@ -83,7 +79,7 @@ class SnakeGame(val height: Int, val width: Int) {
         y %= field[0].size
         snake[0].x = x
         snake[0].y = y
-//        Log.d(TAG,"snake[0]="+snake[0])
+
 
         if (field[x][y] == CellType.EMPTY) {
             field[snake.last().x][snake.last().y] = CellType.EMPTY
@@ -100,10 +96,6 @@ class SnakeGame(val height: Int, val width: Int) {
 
         field[x][y] = CellType.SNAKE_BODY
 
-        Log.d(TAG,"findAt(6,3)="+findAt(6,3))
-        Log.d(TAG,"findAt(0,3)="+findAt(0,3))
-        Log.d(TAG,"snake.size="+snake.size)
-        Log.d(TAG,"snake[0]="+snake[0])
     }
 
     private fun generateNewFood() {
