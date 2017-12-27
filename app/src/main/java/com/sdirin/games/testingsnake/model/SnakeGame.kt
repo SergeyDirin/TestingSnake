@@ -1,5 +1,8 @@
 package com.sdirin.games.testingsnake.model
 
+import com.beust.klaxon.JsonArray
+import com.beust.klaxon.JsonObject
+import com.beust.klaxon.Parser
 import java.util.*
 
 /**
@@ -7,18 +10,41 @@ import java.util.*
  */
 
 const val TAG = "SnakeApp"
-enum class Direction {TOP, RIGHT, DOWN, LEFT}
-enum class CellType {
-    EMPTY,
-    SNAKE_BODY,
-    OUT_OF_FIELD,
-    FOOD,
-    DEAD_BODY,
-    OBSTACLE
+const val SNAKE_KEY = "snake_key"
+const val FIELD_KEY = "field_key"
+const val DIR_KEY = "direction_key"
+const val SPEED_KEY = "speed_key"
+const val FOODS_KEY = "score_key"
+
+private const val GAME_KEY = "snake_game"
+enum class Direction(val code: String) {
+    TOP("0"),
+    RIGHT("1"),
+    DOWN("2"),
+    LEFT("3");
+
+    companion object {
+        private val map = Direction.values().associateBy(Direction::code)
+        fun fromString(type: String) = map[type]
+    }
+}
+enum class CellType(val code: String) {
+    EMPTY("0"),
+    SNAKE_BODY("1"),
+    OUT_OF_FIELD("2"),
+    FOOD("3"),
+    DEAD_BODY("4"),
+    OBSTACLE("5");
+
+    companion object {
+        private val map = CellType.values().associateBy(CellType::code)
+        fun fromString(type: String) = map[type]
+    }
 }
 enum class GameState {
     RUNNING,
-    GAME_OVER
+    GAME_OVER,
+    PAUSED
 }
 fun ClosedRange<Int>.random() =
         Random().nextInt(endInclusive - start) +  start
@@ -157,4 +183,47 @@ class SnakeGame(val height: Int, val width: Int) {
         return foodCnt
     }
 
+    fun getData(speed: Int):String{
+        //snake
+        //field
+        //direction
+        //speed
+        //score
+        val jsnake = JsonArray<JsonObject>()
+        snake.mapTo(jsnake) { JsonObject(hashMapOf("x" to it.x, "y" to it.y)) }
+        val jfield = JsonArray<JsonArray<String>>()
+//        field.mapTo(jfield) { JsonArray(JsonArray(it.))}
+        for(row in field){
+            val jrow = JsonArray<String>()
+            row.mapTo(jrow) { it.code }
+            jfield.add(jrow)
+        }
+        val jgame = JsonObject()
+        jgame[SNAKE_KEY] = jsnake
+        jgame[FIELD_KEY] = jfield
+        jgame[DIR_KEY] = snakeDirection.code
+        jgame[SPEED_KEY] = speed
+        jgame[FOODS_KEY] = foods
+        return jgame.toJsonString()
+    }
+
+    fun resume(data:String):Int{
+        val parser: Parser = Parser()
+        val jgame = parser.parse(StringBuilder(data)) as JsonObject
+        val jsnake = jgame[SNAKE_KEY] as JsonArray<JsonObject>
+        snake.clear()
+        for(part in jsnake){
+            snake.add(Point(part["x"] as Int, part["y"] as Int))
+        }
+        val jfields = jgame[FIELD_KEY] as JsonArray<JsonArray<String>>
+        field = Array(width) { Array(height,{ CellType.EMPTY }) }
+        for ((x, row) in jfields.withIndex()){
+            for ((y, cell) in row.withIndex()){
+                field[x][y]= CellType.fromString(cell)!!
+            }
+        }
+        snakeDirection = Direction.fromString(jgame[DIR_KEY] as String)!!
+        foods = jgame[FOODS_KEY] as Int
+        return jgame[SPEED_KEY] as Int
+    }
 }

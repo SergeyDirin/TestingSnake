@@ -4,9 +4,9 @@ package com.sdirin.games.testingsnake
 * A game of SnakeGame to test TDD approach
 */
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import com.sdirin.games.testingsnake.model.CellType
@@ -20,6 +20,7 @@ import kotlin.concurrent.timer
 
 
 
+const val TAG = "SnakeApp"
 class MainActivity : AppCompatActivity() {
 
     private lateinit var game: SnakeGame
@@ -39,9 +40,13 @@ class MainActivity : AppCompatActivity() {
 
                 width = game_view.getMeasuredWidth()
                 height = game_view.getMeasuredHeight()
-                Log.d(com.sdirin.games.testingsnake.model.TAG,"width=$width height=$height")
 
                 newGame()
+
+                val prefs = getSharedPreferences("game", Context.MODE_PRIVATE)
+                if (prefs.contains("snake_game")){
+                    gameSpeed = game.resume(prefs.getString("snake_game","{}"))
+                }
 
                 game_view.setOnClickListener {
                     if (game.state == GameState.GAME_OVER){
@@ -49,8 +54,12 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 tv_main.setOnClickListener {
-                    if (game.state == GameState.GAME_OVER){
-                        newGame()
+                    when (game.state) {
+                        GameState.GAME_OVER -> newGame()
+                        GameState.PAUSED -> {
+                            game.state = GameState.RUNNING
+                            tv_main.visibility = View.GONE
+                        }
                     }
                 }
 
@@ -58,9 +67,11 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        //todo ui testing
         //todo safe state
+
+
         //todo top scores
+        //todo ui testing
         //todo optimize drawing redraw only changed cells
         //todo publish
     }
@@ -90,6 +101,7 @@ class MainActivity : AppCompatActivity() {
             game_timer.cancel()
             game_view.invalidate()
             tv_main.visibility = View.VISIBLE
+            tv_main.text = "Game Over"
             //todo show new game screen
         }
         game.onEatFood = {
@@ -106,6 +118,22 @@ class MainActivity : AppCompatActivity() {
                         runOnUiThread { update() }
                     }
             )
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        val prefs = getSharedPreferences("game", Context.MODE_PRIVATE)
+        prefs.edit().putString("snake_game",game.getData(gameSpeed)).apply()
+    }
+
+    override fun onBackPressed() {
+        if (game.state == GameState.GAME_OVER || game.state == GameState.PAUSED){
+            super.onBackPressed()
+        } else {
+            game.state = GameState.PAUSED
+            tv_main.visibility = View.VISIBLE
+            tv_main.text = "PAUSED"
         }
     }
 

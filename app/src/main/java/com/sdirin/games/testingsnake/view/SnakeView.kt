@@ -5,10 +5,12 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import com.sdirin.games.testingsnake.model.*
+import com.sdirin.games.testingsnake.model.CellType
+import com.sdirin.games.testingsnake.model.ClickableArea
+import com.sdirin.games.testingsnake.model.Direction
+import com.sdirin.games.testingsnake.model.SnakeGame
 
 
 /**
@@ -134,7 +136,6 @@ class SnakeView @JvmOverloads constructor(
                 }
             }
             MotionEvent.ACTION_UP -> {
-                Log.d(TAG,"Up")
                 topClickable.isVisible = false
                 rightClickable.isVisible = false
                 bottomClickable.isVisible = false
