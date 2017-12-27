@@ -209,5 +209,6 @@ class SnakeTest {
             game.tick()
         }
         assertTrue { wasCalled }
+        Assert.assertEquals(CellType.DEAD_BODY, game.findAt(3,3))
     }
 }

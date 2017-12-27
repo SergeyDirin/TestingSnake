@@ -12,7 +12,8 @@ enum class CellType {
     EMPTY,
     SNAKE_BODY,
     OUT_OF_FIELD,
-    FOOD
+    FOOD,
+    DEAD_BODY
 }
 enum class GameState {
     RUNNING,
@@ -87,17 +88,19 @@ class SnakeGame(val height: Int, val width: Int) {
         if (field[x][y] == CellType.EMPTY) {
             field[snake.last().x][snake.last().y] = CellType.EMPTY
             snake.removeAt(snake.size-1)
+            field[x][y] = CellType.SNAKE_BODY
         } else if (field[x][y] == CellType.FOOD) {
             generateNewFood()
+            field[x][y] = CellType.SNAKE_BODY
         } else if (field[x][y] == CellType.SNAKE_BODY) {
             //die
+            field[x][y] = CellType.DEAD_BODY
+            state = GameState.GAME_OVER
             if (this::onEndGame.isInitialized) {
                 onEndGame()
             }
-            state = GameState.GAME_OVER
         }
 
-        field[x][y] = CellType.SNAKE_BODY
 
     }
 
@@ -126,4 +129,5 @@ class SnakeGame(val height: Int, val width: Int) {
         }
         return foodCnt
     }
+
 }
