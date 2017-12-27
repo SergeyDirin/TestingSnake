@@ -57,12 +57,6 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-
-        // done todo score
-
-
-        //todo beautify center
-
         //todo obsticle
         //todo ui testing
         //todo safe state

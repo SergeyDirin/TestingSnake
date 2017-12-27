@@ -40,6 +40,7 @@ class SnakeView @JvmOverloads constructor(
         height = canvas.height.toFloat()
         val cell_width = cellSize//min(width / cols, height / rows)
         val cell_height = cellSize//min(width / cols, height / rows)
+        val offset = (width - cell_width * cols) / 2
 
         for ((col, line) in game.field.withIndex()) {
             for ((row, cell) in line.withIndex()) {
@@ -59,9 +60,9 @@ class SnakeView @JvmOverloads constructor(
                 }
 
                 canvas.drawRect(
-                        col * cell_width + gap,
+                        col * cell_width + gap + offset,
                         row * cell_height + gap,
-                        (col + 1) * cell_width - gap,
+                        (col + 1) * cell_width - gap + offset,
                         (row + 1) * cell_height - gap,
                         paint)
 
