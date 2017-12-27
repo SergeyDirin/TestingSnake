@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity() {
                 val prefs = getSharedPreferences("game", Context.MODE_PRIVATE)
                 if (prefs.contains("snake_game")){
                     gameSpeed = game.resume(prefs.getString("snake_game","{}"))
+                    tv_score.text = (game.foods*game.scorePerFood).toString()
                 }
 
                 game_view.setOnClickListener {
@@ -66,8 +67,6 @@ class MainActivity : AppCompatActivity() {
                 return false
             }
         })
-
-        //todo safe state
 
 
         //todo top scores
