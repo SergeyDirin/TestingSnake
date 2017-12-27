@@ -211,4 +211,5 @@ class SnakeTest {
         assertTrue { wasCalled }
         Assert.assertEquals(CellType.DEAD_BODY, game.findAt(3,3))
     }
+    //todo on eat food
 }

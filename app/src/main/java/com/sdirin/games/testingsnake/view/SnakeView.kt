@@ -10,7 +10,6 @@ import android.view.View
 import com.sdirin.games.testingsnake.model.CellType
 import com.sdirin.games.testingsnake.model.Direction
 import com.sdirin.games.testingsnake.model.SnakeGame
-import kotlin.math.min
 
 
 
@@ -24,6 +23,7 @@ class SnakeView @JvmOverloads constructor(
     lateinit var game: SnakeGame
     var width = 0f
     var height = 0f
+    val cellSize = 50
 
     override fun draw(canvas: Canvas?) {
         super.draw(canvas)
@@ -38,8 +38,8 @@ class SnakeView @JvmOverloads constructor(
         val gap = 1f
         width = canvas!!.width.toFloat()
         height = canvas.height.toFloat()
-        val cell_width = min(width / cols, height / rows)
-        val cell_height = min(width / cols, height / rows)
+        val cell_width = cellSize//min(width / cols, height / rows)
+        val cell_height = cellSize//min(width / cols, height / rows)
 
         for ((col, line) in game.field.withIndex()) {
             for ((row, cell) in line.withIndex()) {

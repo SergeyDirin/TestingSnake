@@ -29,6 +29,8 @@ class SnakeGame(val height: Int, val width: Int) {
     private var snake: MutableList<Point> = mutableListOf()
 
     var state: GameState = GameState.RUNNING
+    var score = 0
+    val scorePerFood = 13
 
     private var snakePos = Point(0,0)
     private var snakeEnd = Point(0, 0)
@@ -43,6 +45,7 @@ class SnakeGame(val height: Int, val width: Int) {
     var field:Array<Array<CellType>> = Array(width) { Array<CellType>(height,{ CellType.EMPTY }) }
 
     lateinit var onEndGame: ()->Unit
+    lateinit var onEatFood: ()->Unit
 
     private fun checkOutOfField(x: Int, y: Int){
         if (x < 0 || y < 0 || x >= field.size || y >= field[0].size){
@@ -90,6 +93,10 @@ class SnakeGame(val height: Int, val width: Int) {
             snake.removeAt(snake.size-1)
             field[x][y] = CellType.SNAKE_BODY
         } else if (field[x][y] == CellType.FOOD) {
+            if (this::onEatFood.isInitialized) {
+                onEatFood()
+            }
+            score += scorePerFood
             generateNewFood()
             field[x][y] = CellType.SNAKE_BODY
         } else if (field[x][y] == CellType.SNAKE_BODY) {
@@ -100,8 +107,6 @@ class SnakeGame(val height: Int, val width: Int) {
                 onEndGame()
             }
         }
-
-
     }
 
     private fun generateNewFood() {

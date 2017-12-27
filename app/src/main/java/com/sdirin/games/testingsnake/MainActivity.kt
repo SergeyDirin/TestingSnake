@@ -6,8 +6,9 @@ package com.sdirin.games.testingsnake
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
-import android.widget.Toast
+import android.view.ViewTreeObserver
 import com.sdirin.games.testingsnake.model.Direction
 import com.sdirin.games.testingsnake.model.GameState
 import com.sdirin.games.testingsnake.model.SnakeGame
@@ -16,50 +17,74 @@ import java.util.*
 import kotlin.concurrent.timer
 
 
+
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var game: SnakeGame
     private lateinit var game_timer: Timer
+    var width = 0
+    var height = 0
+    var gameSpeed = 0
+    val maxSpeed = 300
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        newGame()
+        game_view.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+            override fun onPreDraw(): Boolean {
+                game_view.viewTreeObserver.removeOnPreDrawListener(this)
 
-        game_view.setOnClickListener {
-            if (game.state == GameState.GAME_OVER){
+                width = game_view.getMeasuredWidth()
+                height = game_view.getMeasuredHeight()
+                Log.d(com.sdirin.games.testingsnake.model.TAG,"width=$width height=$height")
+
                 newGame()
+
+                game_view.setOnClickListener {
+                    if (game.state == GameState.GAME_OVER){
+                        newGame()
+                    }
+                }
+                tv_main.setOnClickListener {
+                    if (game.state == GameState.GAME_OVER){
+                        newGame()
+                    }
+                }
+
+                return false
             }
-        }
-        tv_main.setOnClickListener {
-            if (game.state == GameState.GAME_OVER){
-                newGame()
-            }
-        }
+        })
 
 
-        //todo full screen with buttons
+        // done todo score
 
-        //todo speed increase
-        //todo score
-        //todo border
+
+        //todo beautify center
+
+        //todo obsticle
         //todo ui testing
-        //todo beautify
+        //todo safe state
+        //todo top scores
         //todo optimize drawing redraw only changed cells
         //todo publish
     }
 
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+    }
+
     fun newGame() {
-        game = SnakeGame(17,17)
+        game = SnakeGame((height / game_view.cellSize).toInt(),(width / game_view.cellSize).toInt())
         game.createSnake(3,3)
         game.createFood(4,3)
         game.snakeDirection = Direction.RIGHT
-
+        gameSpeed = 0
         game_timer = timer("GameLoop",
                 false,
                 Date(),
-                500,
+                (500 - gameSpeed).toLong(),
                 {
                     runOnUiThread { update() }
                 }
@@ -70,9 +95,23 @@ class MainActivity : AppCompatActivity() {
         game.onEndGame = {
             game_timer.cancel()
             game_view.invalidate()
-            Toast.makeText(this, "Game Over", Toast.LENGTH_SHORT).show()
             tv_main.visibility = View.VISIBLE
             //todo show new game screen
+        }
+        game.onEatFood = {
+            game_timer.cancel()
+            game_timer.purge()
+            gameSpeed += 5
+            tv_score.text = game.score.toString()
+            if (gameSpeed > maxSpeed) gameSpeed = maxSpeed
+            game_timer = timer("GameLoop",
+                    false,
+                    Date(),
+                    (500 - gameSpeed).toLong(),
+                    {
+                        runOnUiThread { update() }
+                    }
+            )
         }
     }
 
