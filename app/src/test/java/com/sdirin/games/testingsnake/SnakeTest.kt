@@ -138,12 +138,17 @@ class SnakeTest {
 
     @Test
     fun eatFood() {
+        var wasCalled = false
+        game.onEatFood = {
+            wasCalled = true
+        }
         game.createSnake(3,3)
         game.snakeDirection = Direction.RIGHT
         game.createFood(4,3)
         game.tick()
         Assert.assertEquals(CellType.SNAKE_BODY, game.findAt(3,3))
         Assert.assertEquals(CellType.SNAKE_BODY, game.findAt(4,3))
+        Assert.assertTrue(wasCalled)
     }
 
     @Test
@@ -189,7 +194,7 @@ class SnakeTest {
         game.snakeDirection = Direction.RIGHT
         game.createFood(4,3)
         game.tick()
-        Assert.assertEquals(1, game.getFoodCount())
+        Assert.assertEquals(1, game.getCellTypeCount(CellType.FOOD))
     }
 
     @Test
@@ -211,5 +216,41 @@ class SnakeTest {
         assertTrue { wasCalled }
         Assert.assertEquals(CellType.DEAD_BODY, game.findAt(3,3))
     }
-    //todo on eat food
+
+    @Test
+    fun obstacle() {
+        var wasCalled = false
+        game.onEndGame = {
+            wasCalled = true
+        }
+        game.createSnake(3,3)
+        game.snakeDirection = Direction.RIGHT
+        game.createObstacle(4,3)
+        game.tick()
+        Assert.assertEquals(CellType.DEAD_BODY, game.findAt(4,3))
+        Assert.assertTrue(wasCalled)
+    }
+
+    @Test
+    fun newObstacleGeneration() {
+        game.createSnake(3,3)
+        game.snakeDirection = Direction.RIGHT
+//        game.foodToObstacle = 3
+        game.createFood(4,3)
+        game.createFood(5,3)
+        game.createFood(6,3)
+        game.tick()
+        game.tick()
+        game.tick()
+        Assert.assertEquals(1, game.getCellTypeCount(CellType.OBSTACLE))
+    }
+
+    @Test
+    fun score() {
+        game.createSnake(3,3)
+        game.snakeDirection = Direction.RIGHT
+        game.createFood(4,3)
+        game.tick()
+        Assert.assertEquals(1, game.foods)
+    }
 }

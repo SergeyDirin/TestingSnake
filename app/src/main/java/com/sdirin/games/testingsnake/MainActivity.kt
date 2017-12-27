@@ -57,7 +57,6 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        //todo obsticle
         //todo ui testing
         //todo safe state
         //todo top scores
@@ -96,7 +95,7 @@ class MainActivity : AppCompatActivity() {
             game_timer.cancel()
             game_timer.purge()
             gameSpeed += 5
-            tv_score.text = game.score.toString()
+            tv_score.text = (game.foods * game.scorePerFood).toString()
             if (gameSpeed > maxSpeed) gameSpeed = maxSpeed
             game_timer = timer("GameLoop",
                     false,

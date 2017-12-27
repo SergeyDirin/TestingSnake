@@ -6,14 +6,15 @@ import java.util.*
  * Created by SDirin on 22-Dec-17.
  */
 
-val TAG = "SnakeApp"
+const val TAG = "SnakeApp"
 enum class Direction {TOP, RIGHT, DOWN, LEFT}
 enum class CellType {
     EMPTY,
     SNAKE_BODY,
     OUT_OF_FIELD,
     FOOD,
-    DEAD_BODY
+    DEAD_BODY,
+    OBSTACLE
 }
 enum class GameState {
     RUNNING,
@@ -29,8 +30,10 @@ class SnakeGame(val height: Int, val width: Int) {
     private var snake: MutableList<Point> = mutableListOf()
 
     var state: GameState = GameState.RUNNING
-    var score = 0
+    var foods = 0
     val scorePerFood = 13
+
+    val foodToObstacle = 3
 
     private var snakePos = Point(0,0)
     private var snakeEnd = Point(0, 0)
@@ -88,34 +91,48 @@ class SnakeGame(val height: Int, val width: Int) {
         snake[0].x = x
         snake[0].y = y
 
-        if (field[x][y] == CellType.EMPTY) {
-            field[snake.last().x][snake.last().y] = CellType.EMPTY
-            snake.removeAt(snake.size-1)
-            field[x][y] = CellType.SNAKE_BODY
-        } else if (field[x][y] == CellType.FOOD) {
-            if (this::onEatFood.isInitialized) {
-                onEatFood()
+        when (field[x][y]) {
+            CellType.EMPTY -> {
+                field[snake.last().x][snake.last().y] = CellType.EMPTY
+                snake.removeAt(snake.size-1)
+                field[x][y] = CellType.SNAKE_BODY
             }
-            score += scorePerFood
-            generateNewFood()
-            field[x][y] = CellType.SNAKE_BODY
-        } else if (field[x][y] == CellType.SNAKE_BODY) {
-            //die
-            field[x][y] = CellType.DEAD_BODY
-            state = GameState.GAME_OVER
-            if (this::onEndGame.isInitialized) {
-                onEndGame()
+            CellType.FOOD -> {
+                if (this::onEatFood.isInitialized) {
+                    onEatFood()
+                }
+                foods ++
+                if (foods % foodToObstacle == 0){
+                    generateNew(CellType.OBSTACLE)
+                }
+                generateNew(CellType.FOOD)
+                field[x][y] = CellType.SNAKE_BODY
+            }
+            CellType.SNAKE_BODY -> {
+                //die
+                field[x][y] = CellType.DEAD_BODY
+                state = GameState.GAME_OVER
+                if (this::onEndGame.isInitialized) {
+                    onEndGame()
+                }
+            }
+            CellType.OBSTACLE -> {
+                //die
+                field[x][y] = CellType.DEAD_BODY
+                state = GameState.GAME_OVER
+                if (this::onEndGame.isInitialized) {
+                    onEndGame()
+                }
             }
         }
     }
-
-    private fun generateNewFood() {
+    private fun generateNew(cellType: CellType) {
         var loop = true
         while(loop){
             var p = Point((0..field.size).random(),(0..field[0].size).random())
             if (field[p.x][p.y] == CellType.EMPTY){
                 loop = false
-                field[p.x][p.y] = CellType.FOOD
+                field[p.x][p.y] = cellType
             }
         }
     }
@@ -125,11 +142,16 @@ class SnakeGame(val height: Int, val width: Int) {
         field[x][y] = CellType.FOOD
     }
 
-    fun getFoodCount():Int {
+    fun createObstacle(x:Int, y:Int) {
+        checkOutOfField(x,y)
+        field[x][y] = CellType.OBSTACLE
+    }
+
+    fun getCellTypeCount(cellType: CellType):Int {
         var foodCnt = 0
         for (line in field) {
             line
-                .filter { it == CellType.FOOD }
+                .filter { it == cellType }
                 .forEach { foodCnt++ }
         }
         return foodCnt

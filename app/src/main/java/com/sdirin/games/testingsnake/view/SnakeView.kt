@@ -57,6 +57,9 @@ class SnakeView @JvmOverloads constructor(
                     CellType.DEAD_BODY -> {
                         paint.color = Color.RED
                     }
+                    CellType.OBSTACLE -> {
+                        paint.color = Color.BLUE
+                    }
                 }
 
                 canvas.drawRect(
