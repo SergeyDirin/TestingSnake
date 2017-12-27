@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
+import com.sdirin.games.testingsnake.model.CellType
 import com.sdirin.games.testingsnake.model.Direction
 import com.sdirin.games.testingsnake.model.GameState
 import com.sdirin.games.testingsnake.model.SnakeGame
@@ -71,7 +72,7 @@ class MainActivity : AppCompatActivity() {
     fun newGame() {
         game = SnakeGame((height / game_view.cellSize).toInt(),(width / game_view.cellSize).toInt())
         game.createSnake(3,3)
-        game.createFood(4,3)
+        game.generateNew(CellType.FOOD)
         game.snakeDirection = Direction.RIGHT
         gameSpeed = 0
         game_timer = timer("GameLoop",

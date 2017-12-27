@@ -126,7 +126,7 @@ class SnakeGame(val height: Int, val width: Int) {
             }
         }
     }
-    private fun generateNew(cellType: CellType) {
+    fun generateNew(cellType: CellType) {
         var loop = true
         while(loop){
             var p = Point((0..field.size).random(),(0..field[0].size).random())
