@@ -98,10 +98,10 @@ class SnakeGame(val height: Int, val width: Int) {
                 field[x][y] = CellType.SNAKE_BODY
             }
             CellType.FOOD -> {
+                foods ++
                 if (this::onEatFood.isInitialized) {
                     onEatFood()
                 }
-                foods ++
                 if (foods % foodToObstacle == 0){
                     generateNew(CellType.OBSTACLE)
                 }
