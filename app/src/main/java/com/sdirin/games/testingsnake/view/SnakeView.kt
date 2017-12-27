@@ -16,9 +16,9 @@ import com.sdirin.games.testingsnake.model.SnakeGame
 /**
  * Created by SDirin on 26-Dec-17.
  */
-class SnakeView @JvmOverloads constructor(
-        context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : View(context, attrs, defStyleAttr) {
+class SnakeView constructor(
+        context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0, defStyleRes: Int = 0
+) : View(context, attrs, defStyleAttr, defStyleRes) {
 
     lateinit var game: SnakeGame
     var width = 0f

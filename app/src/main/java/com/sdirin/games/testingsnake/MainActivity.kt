@@ -57,6 +57,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        //todo ui redo
         //todo ui testing
         //todo safe state
         //todo top scores
