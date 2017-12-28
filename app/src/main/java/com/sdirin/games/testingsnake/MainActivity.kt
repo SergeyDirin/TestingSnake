@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     var height = 0
     var gameSpeed = 0
     val maxSpeed = 300
+    var skipFirst = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,10 +69,11 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-
-        //todo top scores
-        //todo ui testing
+        //todo bug saving dead on restore continues
+        //todo top scores local
         //todo optimize drawing redraw only changed cells
+        //todo splash and pause screens
+        //todo ui testing
         //todo publish
     }
 
@@ -109,12 +111,17 @@ class MainActivity : AppCompatActivity() {
             gameSpeed += 5
             tv_score.text = (game.foods * game.scorePerFood).toString()
             if (gameSpeed > maxSpeed) gameSpeed = maxSpeed
+            skipFirst = true
             game_timer = timer("GameLoop",
                     false,
                     Date(),
                     (500 - gameSpeed).toLong(),
                     {
-                        runOnUiThread { update() }
+                        if (skipFirst) {
+                            skipFirst = false
+                        } else {
+                            runOnUiThread { update() }
+                        }
                     }
             )
         }
