@@ -1,0 +1,56 @@
+package com.sdirin.games.testingsnake.utils
+
+import android.content.Context
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.Collections.sort
+
+
+/**
+ * Created by SDirin on 28-Dec-17.
+ */
+
+const val TOP_SCORES = "top_scores"
+const val DATE_KEY = "date_key"
+const val SCORE_KEY = "score_key"
+class TopScores(val context: Context) {
+
+    //date - score
+    //1 - 5
+    fun safeScore(score: Int) {
+        //reading saved data
+        val prefs = context.getSharedPreferences(TOP_SCORES, Context.MODE_PRIVATE)
+
+        val top = getTop()
+
+        val df = SimpleDateFormat.getDateInstance()
+        val today = Calendar.getInstance().time
+        val reportDate = df.format(today)
+
+        top.add(Score(reportDate, score))
+        //sorting data
+        sort(top, { o1, o2 ->  o2.score.compareTo(o1.score)})
+        //saving data
+        for ((i, data_score) in top.withIndex()){
+                prefs.edit()
+                    .putString(DATE_KEY + i.toString(), data_score.date)
+                    .putInt(SCORE_KEY + i.toString(), data_score.score)
+                    .apply()
+        }
+    }
+
+    fun getTop():MutableList<Score>{
+        val prefs = context.getSharedPreferences(TOP_SCORES, Context.MODE_PRIVATE)
+        val top : MutableList<Score> = ArrayList()
+        for (i in 0..4){
+            if (prefs.contains(DATE_KEY + i.toString())){
+                top.add(Score(prefs.getString(DATE_KEY + i.toString(),"none"),prefs.getInt(SCORE_KEY + i.toString(),0)))
+            } else {
+                break
+            }
+        }
+        return top
+    }
+
+    class Score(val date: String, val score: Int)
+}

@@ -1,18 +1,21 @@
-package com.sdirin.games.testingsnake
+package com.sdirin.games.testingsnake.activities
 
 /*
 * A game of SnakeGame to test TDD approach
 */
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.ViewTreeObserver
+import com.sdirin.games.testingsnake.R
 import com.sdirin.games.testingsnake.model.CellType
 import com.sdirin.games.testingsnake.model.Direction
 import com.sdirin.games.testingsnake.model.GameState
 import com.sdirin.games.testingsnake.model.SnakeGame
+import com.sdirin.games.testingsnake.utils.TopScores
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 import kotlin.concurrent.timer
@@ -21,6 +24,7 @@ import kotlin.concurrent.timer
 
 
 const val TAG = "SnakeApp"
+const val SNAKE_GAME = "snake_game"
 class MainActivity : AppCompatActivity() {
 
     private lateinit var game: SnakeGame
@@ -30,46 +34,16 @@ class MainActivity : AppCompatActivity() {
     var gameSpeed = 0
     val maxSpeed = 300
     var skipFirst = false
+    val topScores = TopScores(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        game_view.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
-            override fun onPreDraw(): Boolean {
-                game_view.viewTreeObserver.removeOnPreDrawListener(this)
-
-                width = game_view.getMeasuredWidth()
-                height = game_view.getMeasuredHeight()
-
-                newGame()
-
-                val prefs = getSharedPreferences("game", Context.MODE_PRIVATE)
-                if (prefs.contains("snake_game")){
-                    gameSpeed = game.resume(prefs.getString("snake_game","{}"))
-                    tv_score.text = (game.foods*game.scorePerFood).toString()
-                }
-
-                game_view.setOnClickListener {
-                    if (game.state == GameState.GAME_OVER){
-                        newGame()
-                    }
-                }
-                tv_main.setOnClickListener {
-                    when (game.state) {
-                        GameState.GAME_OVER -> newGame()
-                        GameState.PAUSED -> {
-                            game.state = GameState.RUNNING
-                            tv_main.visibility = View.GONE
-                        }
-                    }
-                }
-
-                return false
-            }
-        })
+        //onGameResume()
 
         //todo top scores local
+
         //todo optimize drawing redraw only changed cells
         //todo splash and pause screens
         //todo ui testing
@@ -96,13 +70,16 @@ class MainActivity : AppCompatActivity() {
         )
         game_view.game = game
         tv_main.visibility = View.GONE
+        tv_score.text = "0"
 
         game.onEndGame = {
             game_timer.cancel()
             game_view.invalidate()
-            tv_main.visibility = View.VISIBLE
-            tv_main.text = "Game Over"
-            //todo show new game screen
+            topScores.safeScore(game.foods * game.scorePerFood)
+//            tv_main.visibility = View.VISIBLE
+//            tv_main.text = "Game Over"
+            val intent = Intent(this,GameOverActivity::class.java)
+            this@MainActivity.startActivity(intent)
         }
         game.onEatFood = {
             game_timer.cancel()
@@ -131,12 +108,54 @@ class MainActivity : AppCompatActivity() {
         safeState()
     }
 
+    private fun onGameResume(){
+
+        game_view.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+            override fun onPreDraw(): Boolean {
+                game_view.viewTreeObserver.removeOnPreDrawListener(this)
+
+                width = game_view.getMeasuredWidth()
+                height = game_view.getMeasuredHeight()
+
+                newGame()
+
+                val prefs = getSharedPreferences("game", Context.MODE_PRIVATE)
+                if (prefs.contains(SNAKE_GAME)){
+                    gameSpeed = game.resume(prefs.getString(SNAKE_GAME,"{}"))
+                    tv_score.text = (game.foods*game.scorePerFood).toString()
+                }
+
+                game_view.setOnClickListener {
+                    if (game.state == GameState.GAME_OVER){
+                        newGame()
+                    }
+                }
+                tv_main.setOnClickListener {
+                    when (game.state) {
+                        GameState.GAME_OVER -> newGame()
+                        GameState.PAUSED -> {
+                            game.state = GameState.RUNNING
+                            tv_main.visibility = View.GONE
+                        }
+                    }
+                }
+
+                return false
+            }
+        })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        onGameResume()
+    }
+
     fun safeState() {
         val prefs = getSharedPreferences("game", Context.MODE_PRIVATE)
         if (game.state != GameState.GAME_OVER) {
-            prefs.edit().putString("snake_game", game.getData(gameSpeed)).apply()
+            prefs.edit().putString(SNAKE_GAME, game.getData(gameSpeed)).apply()
         } else {
-            prefs.edit().remove("snake_game").apply()
+            prefs.edit().remove(SNAKE_GAME).apply()
         }
     }
 

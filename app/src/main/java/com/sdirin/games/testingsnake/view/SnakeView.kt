@@ -33,6 +33,10 @@ class SnakeView @JvmOverloads constructor(
     override fun draw(canvas: Canvas?) {
         super.draw(canvas)
 
+        if (!this::game.isInitialized){
+            return
+        }
+
         val paint = Paint()
         paint.alpha = 0xFF
         paint.color = Color.BLUE
@@ -107,6 +111,9 @@ class SnakeView @JvmOverloads constructor(
         val x = event.x.toInt()
         val y = event.y.toInt()
 
+        if (!this::game.isInitialized){
+            return false
+        }
         when (event.action) {
 
             MotionEvent.ACTION_DOWN -> {
