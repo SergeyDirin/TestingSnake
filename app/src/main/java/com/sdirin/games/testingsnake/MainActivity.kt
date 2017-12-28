@@ -69,7 +69,6 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        //todo bug saving dead on restore continues
         //todo top scores local
         //todo optimize drawing redraw only changed cells
         //todo splash and pause screens
@@ -129,8 +128,16 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
+        safeState()
+    }
+
+    fun safeState() {
         val prefs = getSharedPreferences("game", Context.MODE_PRIVATE)
-        prefs.edit().putString("snake_game",game.getData(gameSpeed)).apply()
+        if (game.state != GameState.GAME_OVER) {
+            prefs.edit().putString("snake_game", game.getData(gameSpeed)).apply()
+        } else {
+            prefs.edit().remove("snake_game").apply()
+        }
     }
 
     override fun onBackPressed() {
@@ -140,6 +147,7 @@ class MainActivity : AppCompatActivity() {
             game.state = GameState.PAUSED
             tv_main.visibility = View.VISIBLE
             tv_main.text = "PAUSED"
+            safeState()
         }
     }
 
