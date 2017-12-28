@@ -40,11 +40,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //todo optimize drawing redraw only changed cells
-
-        //todo splash and pause screens
-        //todo ui testing
         //todo publish
+
+        //todo ui testing
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -66,7 +64,7 @@ class MainActivity : AppCompatActivity() {
                 }
         )
         game_view.game = game
-        tv_main.visibility = View.GONE
+        main_text_container.visibility = View.GONE
         tv_score.text = "0"
 
         game.onEndGame = {
@@ -127,16 +125,20 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 game_view.setOnClickListener {
-                    if (game.state == GameState.GAME_OVER){
-                        newGame()
-                    }
-                }
-                tv_main.setOnClickListener {
                     when (game.state) {
                         GameState.GAME_OVER -> newGame()
                         GameState.PAUSED -> {
                             game.state = GameState.RUNNING
-                            tv_main.visibility = View.GONE
+                            main_text_container.visibility = View.GONE
+                        }
+                    }
+                }
+                main_text_container.setOnClickListener {
+                    when (game.state) {
+                        GameState.GAME_OVER -> newGame()
+                        GameState.PAUSED -> {
+                            game.state = GameState.RUNNING
+                            main_text_container.visibility = View.GONE
                         }
                     }
                 }
@@ -165,7 +167,7 @@ class MainActivity : AppCompatActivity() {
             super.onBackPressed()
         } else {
             game.state = GameState.PAUSED
-            tv_main.visibility = View.VISIBLE
+            main_text_container.visibility = View.VISIBLE
             tv_main.text = "PAUSED"
             safeState()
         }
