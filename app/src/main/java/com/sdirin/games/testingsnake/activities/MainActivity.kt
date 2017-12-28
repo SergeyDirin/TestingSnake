@@ -40,11 +40,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //onGameResume()
-
-        //todo top scores local
-
         //todo optimize drawing redraw only changed cells
+
         //todo splash and pause screens
         //todo ui testing
         //todo publish
@@ -123,6 +120,10 @@ class MainActivity : AppCompatActivity() {
                 if (prefs.contains(SNAKE_GAME)){
                     gameSpeed = game.resume(prefs.getString(SNAKE_GAME,"{}"))
                     tv_score.text = (game.foods*game.scorePerFood).toString()
+                }
+
+                controller_view.onDirectionChange = {
+                    game.snakeDirection = it
                 }
 
                 game_view.setOnClickListener {

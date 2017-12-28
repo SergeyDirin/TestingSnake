@@ -5,11 +5,9 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
-import android.view.MotionEvent
 import android.view.View
 import com.sdirin.games.testingsnake.model.CellType
 import com.sdirin.games.testingsnake.model.ClickableArea
-import com.sdirin.games.testingsnake.model.Direction
 import com.sdirin.games.testingsnake.model.SnakeGame
 
 
@@ -80,77 +78,6 @@ class SnakeView @JvmOverloads constructor(
 
             }
         }
-        paint.color = Color.RED
-        paint.alpha = 0x60
-        if (topClickable.isVisible){
-            canvas.drawPath(topClickable.getPath(), paint)
-        }
-        if (rightClickable.isVisible){
-            canvas.drawPath(rightClickable.getPath(), paint)
-        }
-        if (bottomClickable.isVisible){
-            canvas.drawPath(bottomClickable.getPath(), paint)
-        }
-        if (leftClickable.isVisible){
-            canvas.drawPath(leftClickable.getPath(), paint)
-        }
-    }
-
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        if (w != 0 && h != 0){
-            topClickable = ClickableArea(h,w,Direction.TOP)
-            rightClickable = ClickableArea(h,w,Direction.RIGHT)
-            bottomClickable = ClickableArea(h,w,Direction.DOWN)
-            leftClickable = ClickableArea(h,w, Direction.LEFT)
-        }
-    }
-
-
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        val x = event.x.toInt()
-        val y = event.y.toInt()
-
-        if (!this::game.isInitialized){
-            return false
-        }
-        when (event.action) {
-
-            MotionEvent.ACTION_DOWN -> {
-                //top area
-                if (topClickable.inRect(x,y)){
-                    game.snakeDirection = Direction.TOP
-                    topClickable.isVisible = true
-                    invalidate()
-                }
-                //right area
-                if (rightClickable.inRect(x,y)){
-                    game.snakeDirection = Direction.RIGHT
-                    rightClickable.isVisible = true
-                    invalidate()
-                }
-                //bottom area
-                if (bottomClickable.inRect(x,y)){
-                    game.snakeDirection = Direction.DOWN
-                    bottomClickable.isVisible = true
-                    invalidate()
-                }
-                //left area
-                if (leftClickable.inRect(x,y)){
-                    game.snakeDirection = Direction.LEFT
-                    leftClickable.isVisible = true
-                    invalidate()
-                }
-            }
-            MotionEvent.ACTION_UP -> {
-                topClickable.isVisible = false
-                rightClickable.isVisible = false
-                bottomClickable.isVisible = false
-                leftClickable.isVisible = false
-                invalidate()
-            }
-        }
-        return true
     }
 
 }
