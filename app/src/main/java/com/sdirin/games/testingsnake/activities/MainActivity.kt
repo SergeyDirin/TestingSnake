@@ -9,6 +9,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import com.sdirin.games.testingsnake.R
 import com.sdirin.games.testingsnake.model.*
@@ -16,12 +18,6 @@ import com.sdirin.games.testingsnake.utils.TopScores
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 import kotlin.concurrent.timer
-
-
-
-
-
-
 
 
 
@@ -45,15 +41,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //todo add about and license
+
         //todo publish
 
         //todo ui testing
         //todo sounds
         //todo in cell animation
-    }
-
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
     }
 
     fun newGame() {
@@ -201,6 +195,28 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         onGameResume()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.about_menu -> {
+                val intent = Intent(this,AboutActivity::class.java)
+                this@MainActivity.startActivity(intent)
+                true
+            }
+            R.id.license_menu -> {
+                val intent = Intent(this,LicenseActivity::class.java)
+                this@MainActivity.startActivity(intent)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     fun safeState() {
