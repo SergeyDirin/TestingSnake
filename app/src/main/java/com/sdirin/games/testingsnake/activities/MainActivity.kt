@@ -23,6 +23,8 @@ import kotlin.concurrent.timer
 
 
 
+
+
 const val TAG = "SnakeApp"
 const val SNAKE_GAME = "snake_game"
 class MainActivity : AppCompatActivity() {
@@ -40,9 +42,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //todo bug pwoer off and on starts another loop
+        //todo show controll arrows before start
+
         //todo publish
 
         //todo ui testing
+        //todo sounds
+        //todo in cell animation
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
