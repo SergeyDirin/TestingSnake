@@ -7,18 +7,19 @@ package com.sdirin.games.testingsnake.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import android.view.ViewTreeObserver
 import com.sdirin.games.testingsnake.R
-import com.sdirin.games.testingsnake.model.CellType
-import com.sdirin.games.testingsnake.model.Direction
-import com.sdirin.games.testingsnake.model.GameState
-import com.sdirin.games.testingsnake.model.SnakeGame
+import com.sdirin.games.testingsnake.model.*
 import com.sdirin.games.testingsnake.utils.TopScores
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 import kotlin.concurrent.timer
+
+
+
+
 
 
 
@@ -37,12 +38,12 @@ class MainActivity : AppCompatActivity() {
     val maxSpeed = 300
     var skipFirst = false
     val topScores = TopScores(this)
+    var showAnim = true
+    lateinit var animArrow: ClickableArea
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        //todo show controll arrows before start
 
         //todo publish
 
@@ -61,20 +62,14 @@ class MainActivity : AppCompatActivity() {
         game.generateNew(CellType.FOOD)
         game.snakeDirection = Direction.RIGHT
         gameSpeed = 0
-        game_timer = timer("GameLoop",
-                false,
-                Date(),
-                (500 - gameSpeed).toLong(),
-                {
-                    runOnUiThread { update() }
-                }
-        )
         game_view.game = game
         main_text_container.visibility = View.GONE
         tv_score.text = "0"
+        game_view.invalidate()
+        showAnimation()
 
         game.onEndGame = {
-            game_timer.cancel()
+            stopGameLoop()
             game_view.invalidate()
             topScores.safeScore(game.foods * game.scorePerFood)
 //            tv_main.visibility = View.VISIBLE
@@ -83,30 +78,81 @@ class MainActivity : AppCompatActivity() {
             this@MainActivity.startActivity(intent)
         }
         game.onEatFood = {
-            game_timer.cancel()
-            game_timer.purge()
+            stopGameLoop()
             gameSpeed += 5
             tv_score.text = (game.foods * game.scorePerFood).toString()
             if (gameSpeed > maxSpeed) gameSpeed = maxSpeed
             skipFirst = true
-            game_timer = timer("GameLoop",
-                    false,
-                    Date(),
-                    (500 - gameSpeed).toLong(),
-                    {
-                        if (skipFirst) {
-                            skipFirst = false
-                        } else {
-                            runOnUiThread { update() }
-                        }
-                    }
-            )
+            startGameLoop()
         }
+    }
+
+    private fun showAnimation() {
+        stopGameLoop()
+        animArrow = controller_view.topClickable
+
+        animArrow.isVisible = true
+        animationLoop()
+    }
+    fun animationLoop(){
+        Handler().postDelayed(Runnable {
+            runOnUiThread { showArrow() }
+        }, 300)
+    }
+    fun showArrow(){
+        when (animArrow) {
+            controller_view.topClickable -> {
+                animArrow.isVisible = false
+                animArrow = controller_view.rightClickable
+                animArrow.isVisible = true
+                controller_view.invalidate()
+                animationLoop()
+            }
+            controller_view.rightClickable -> {
+                animArrow.isVisible = false
+                animArrow = controller_view.bottomClickable
+                animArrow.isVisible = true
+                controller_view.invalidate()
+                animationLoop()
+            }
+            controller_view.bottomClickable -> {
+                animArrow.isVisible = false
+                animArrow = controller_view.leftClickable
+                animArrow.isVisible = true
+                controller_view.invalidate()
+                animationLoop()
+            }
+            controller_view.leftClickable -> {
+                animArrow.isVisible = false
+                controller_view.invalidate()
+                startGameLoop()
+            }
+        }
+    }
+
+    private fun startGameLoop() {
+        stopGameLoop()
+        game_timer = timer("GameLoop",
+                false,
+                Date(),
+                (500 - gameSpeed).toLong(),
+                {
+                    if (skipFirst) {
+                        skipFirst = false
+                    } else {
+                        runOnUiThread { update() }
+                    }
+                }
+        )
     }
 
     override fun onPause() {
         super.onPause()
         safeState()
+        stopGameLoop()
+    }
+
+    private fun stopGameLoop() {
         if (this::game_timer.isInitialized) {
             game_timer.cancel()
             game_timer.purge()
@@ -114,13 +160,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onGameResume(){
+        game_view.post(Runnable {
 
-        game_view.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
-            override fun onPreDraw(): Boolean {
-                game_view.viewTreeObserver.removeOnPreDrawListener(this)
-
-                width = game_view.getMeasuredWidth()
-                height = game_view.getMeasuredHeight()
+                width = game_view.measuredWidth
+                height = game_view.measuredHeight
 
                 newGame()
 
@@ -152,9 +195,6 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
-
-                return false
-            }
         })
     }
 
