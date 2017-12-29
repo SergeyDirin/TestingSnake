@@ -42,7 +42,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //todo bug pwoer off and on starts another loop
         //todo show controll arrows before start
 
         //todo publish
@@ -108,6 +107,10 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         safeState()
+        if (this::game_timer.isInitialized) {
+            game_timer.cancel()
+            game_timer.purge()
+        }
     }
 
     private fun onGameResume(){
@@ -161,11 +164,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun safeState() {
-        val prefs = getSharedPreferences("game", Context.MODE_PRIVATE)
-        if (game.state != GameState.GAME_OVER) {
-            prefs.edit().putString(SNAKE_GAME, game.getData(gameSpeed)).apply()
-        } else {
-            prefs.edit().remove(SNAKE_GAME).apply()
+        if (this::game.isInitialized){
+            val prefs = getSharedPreferences("game", Context.MODE_PRIVATE)
+            if (game.state != GameState.GAME_OVER) {
+                prefs.edit().putString(SNAKE_GAME, game.getData(gameSpeed)).apply()
+            } else {
+                prefs.edit().remove(SNAKE_GAME).apply()
+            }
         }
     }
 
