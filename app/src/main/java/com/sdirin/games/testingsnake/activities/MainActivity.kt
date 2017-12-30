@@ -45,6 +45,8 @@ class MainActivity : AppCompatActivity() {
 
         //todo publish
 
+        //todo score dependant on time
+        //todo safe slots
         //todo ui testing
         //todo sounds
         //todo in cell animation
