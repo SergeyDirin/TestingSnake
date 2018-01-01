@@ -87,6 +87,7 @@ class SnakeTest {
     @Test
     fun moveSnakeBack() {
         game.createSnake(0,3)
+        game.snakeDirection = Direction.TOP
         game.snakeDirection = Direction.LEFT
         game.tick()
         Assert.assertEquals( CellType.SNAKE_BODY, game.findAt(6,3))
@@ -206,15 +207,22 @@ class SnakeTest {
         game.createSnake(3,3)
         game.snakeDirection = Direction.RIGHT
         game.createFood(4,3)
+        game.createFood(5,3)
+        game.createFood(5,4)
+        game.tick()
+        game.tick()
+        game.snakeDirection = Direction.DOWN
         game.tick()
         game.snakeDirection = Direction.LEFT
+        game.tick()
+        game.snakeDirection = Direction.TOP
         game.tick()
         Assert.assertEquals(GameState.GAME_OVER, game.state)
         assertFailsWith(SnakeGame.GameOverException::class) {
             game.tick()
         }
         assertTrue { wasCalled }
-        Assert.assertEquals(CellType.DEAD_BODY, game.findAt(3,3))
+        Assert.assertEquals(CellType.DEAD_BODY, game.findAt(4,3))
     }
 
     @Test
@@ -257,6 +265,7 @@ class SnakeTest {
     @Test
     fun checkDecreasingScore(){
         game.createSnake(3,3)
+        game.snakeDirection = Direction.TOP
         game.snakeDirection = Direction.LEFT
         game.createFood(1,1)
         game.tick()
@@ -265,6 +274,14 @@ class SnakeTest {
         game.tick()
         game.tick()
         Assert.assertEquals(7, game.score)
+    }
+
+    @Test
+    fun preventGoingBack(){
+        game.createSnake(3,3)
+        game.snakeDirection = Direction.RIGHT
+        game.snakeDirection = Direction.LEFT
+        Assert.assertEquals(Direction.RIGHT,game.snakeDirection)
     }
 }
 

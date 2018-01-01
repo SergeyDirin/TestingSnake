@@ -15,7 +15,7 @@ const val SNAKE_KEY = "snake_key"
 const val FIELD_KEY = "field_key"
 const val DIR_KEY = "direction_key"
 const val SPEED_KEY = "speed_key"
-const val FOODS_KEY = "score_key"
+const val SCORE_KEY = "score_key"
 
 private const val GAME_KEY = "snake_game"
 enum class Direction(val code: String) {
@@ -53,6 +53,23 @@ fun ClosedRange<Int>.random() =
 class SnakeGame(val height: Int, val width: Int) {
 
     var snakeDirection = Direction.RIGHT
+        set(value) {
+            when (snakeDirection){
+                Direction.TOP -> {
+                    if (value == Direction.DOWN) return
+                }
+                Direction.RIGHT -> {
+                    if (value == Direction.LEFT) return
+                }
+                Direction.DOWN -> {
+                    if (value == Direction.TOP) return
+                }
+                Direction.LEFT -> {
+                    if (value == Direction.RIGHT) return
+                }
+            }
+            field = value
+        }
 
     private var snake: MutableList<Point> = mutableListOf()
 
@@ -219,7 +236,7 @@ class SnakeGame(val height: Int, val width: Int) {
         jgame[FIELD_KEY] = jfield
         jgame[DIR_KEY] = snakeDirection.code
         jgame[SPEED_KEY] = speed
-        jgame[FOODS_KEY] = foods
+        jgame[SCORE_KEY] = score
         return jgame.toJsonString()
     }
 
@@ -239,7 +256,7 @@ class SnakeGame(val height: Int, val width: Int) {
             }
         }
         snakeDirection = Direction.fromString(jgame[DIR_KEY] as String)!!
-        foods = jgame[FOODS_KEY] as Int
+        score = jgame[SCORE_KEY] as Int
         return jgame[SPEED_KEY] as Int
     }
 }

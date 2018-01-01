@@ -42,9 +42,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
-        //todo prevent going back
-
-
         //todo clear hidhScores
         //todo safe slots
         //todo ui testing
