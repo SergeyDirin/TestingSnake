@@ -41,11 +41,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //todo add about and license
 
-        //todo publish
+        //todo prevent going back
 
-        //todo score dependant on time
+
+        //todo clear hidhScores
         //todo safe slots
         //todo ui testing
         //todo sounds
@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         game.onEndGame = {
             stopGameLoop()
             game_view.invalidate()
-            topScores.safeScore(game.foods * game.scorePerFood)
+            topScores.safeScore(game.score)
 //            tv_main.visibility = View.VISIBLE
 //            tv_main.text = "Game Over"
             val intent = Intent(this,GameOverActivity::class.java)
@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
         game.onEatFood = {
             stopGameLoop()
             gameSpeed += 5
-            tv_score.text = (game.foods * game.scorePerFood).toString()
+            tv_score.text = game.score.toString()
             if (gameSpeed > maxSpeed) gameSpeed = maxSpeed
             skipFirst = true
             startGameLoop()
@@ -166,7 +166,7 @@ class MainActivity : AppCompatActivity() {
                 val prefs = getSharedPreferences("game", Context.MODE_PRIVATE)
                 if (prefs.contains(SNAKE_GAME)){
                     gameSpeed = game.resume(prefs.getString(SNAKE_GAME,"{}"))
-                    tv_score.text = (game.foods*game.scorePerFood).toString()
+                    tv_score.text = (game.score).toString()
                 }
 
                 controller_view.onDirectionChange = {

@@ -170,7 +170,7 @@ class SnakeTest {
         game.createFood(6,3)
         game.tick()
         game.tick()
-        Assert.assertEquals(CellType.EMPTY, game.findAt(5,3))
+        Assert.assertTrue(CellType.EMPTY == game.findAt(5,3) || CellType.FOOD == game.findAt(5,3))
         Assert.assertEquals(CellType.SNAKE_BODY, game.findAt(6,3))
         Assert.assertEquals(CellType.SNAKE_BODY, game.findAt(0,3))
     }
@@ -253,4 +253,32 @@ class SnakeTest {
         game.tick()
         Assert.assertEquals(1, game.foods)
     }
+
+    @Test
+    fun checkDecreasingScore(){
+        game.createSnake(3,3)
+        game.snakeDirection = Direction.LEFT
+        game.createFood(1,1)
+        game.tick()
+        game.tick()
+        game.snakeDirection = Direction.TOP
+        game.tick()
+        game.tick()
+        Assert.assertEquals(7, game.score)
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

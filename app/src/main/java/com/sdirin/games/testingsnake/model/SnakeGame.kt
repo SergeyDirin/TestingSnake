@@ -4,6 +4,7 @@ import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import java.util.*
+import kotlin.math.abs
 
 /**
  * Created by SDirin on 22-Dec-17.
@@ -57,9 +58,10 @@ class SnakeGame(val height: Int, val width: Int) {
 
     var state: GameState = GameState.RUNNING
     var foods = 0
-    val scorePerFood = 13
+    private var scorePerFood = 13
+    var score = 0
 
-    val foodToObstacle = 3
+    private val foodToObstacle = 3
 
     private var snakePos = Point(0,0)
     private var snakeEnd = Point(0, 0)
@@ -122,9 +124,12 @@ class SnakeGame(val height: Int, val width: Int) {
                 field[snake.last().x][snake.last().y] = CellType.EMPTY
                 snake.removeAt(snake.size-1)
                 field[x][y] = CellType.SNAKE_BODY
+                scorePerFood--
+                if (scorePerFood<0) scorePerFood=0
             }
             CellType.FOOD -> {
                 foods ++
+                score += scorePerFood
                 if (this::onEatFood.isInitialized) {
                     onEatFood()
                 }
@@ -155,17 +160,28 @@ class SnakeGame(val height: Int, val width: Int) {
     fun generateNew(cellType: CellType) {
         var loop = true
         while(loop){
-            var p = Point((0..field.size).random(),(0..field[0].size).random())
+            val p = Point((0..field.size).random(),(0..field[0].size).random())
             if (field[p.x][p.y] == CellType.EMPTY){
                 loop = false
                 field[p.x][p.y] = cellType
+
             }
         }
+    }
+
+    fun dist(p1: Point, p2: Point): Int {
+        //todo check for not direct dist
+        return abs(p1.x - p2.x) + abs(p1.y - p2.y)
     }
 
     fun createFood(x:Int, y:Int) {
         checkOutOfField(x,y)
         field[x][y] = CellType.FOOD
+        if (snake.size>0) {
+            scorePerFood = dist(Point(x, y), snake[0]) + field.size - 1
+        } else {
+            scorePerFood = 13
+        }
     }
 
     fun createObstacle(x:Int, y:Int) {
