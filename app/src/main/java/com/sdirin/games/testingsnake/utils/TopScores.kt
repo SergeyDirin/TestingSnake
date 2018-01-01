@@ -52,5 +52,16 @@ class TopScores(val context: Context) {
         return top
     }
 
+    fun clearTop(){
+        val prefs = context.getSharedPreferences(TOP_SCORES, Context.MODE_PRIVATE)
+        for (i in 0..4){
+            if (prefs.contains(DATE_KEY + i.toString())){
+                prefs.edit().remove(DATE_KEY + i.toString()).apply()
+            } else {
+                break
+            }
+        }
+    }
+
     class Score(val date: String, val score: Int)
 }

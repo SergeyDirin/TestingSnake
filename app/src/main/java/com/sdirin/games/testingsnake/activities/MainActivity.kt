@@ -41,8 +41,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-        //todo clear hidhScores
         //todo safe slots
         //todo ui testing
         //todo sounds

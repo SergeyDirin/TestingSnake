@@ -18,18 +18,31 @@ class GameOverActivity : AppCompatActivity() {
             finish()
         }
 
+        btn_clear.setOnClickListener{
+            TopScores(this).clearTop()
+            showTop()
+        }
+
         showTop()
     }
 
     fun showTop(){
         val topScores = TopScores(this)
         val top = topScores.getTop()
-        for ((id,score) in top.withIndex()){
-            if (id < 5) {
+        for(id in (0..4)){
+            if (top.size > id){
                 val dateId = resources.getIdentifier("tv_top${id + 1}_date", "id", this.packageName)
-                findViewById<TextView>(dateId).text = score.date
+                findViewById<TextView>(dateId).text = top[id].date
                 val scoreId = resources.getIdentifier("tv_top${id + 1}_score", "id", this.packageName)
-                findViewById<TextView>(scoreId).text = score.score.toString()
+                findViewById<TextView>(scoreId).text = top[id].score.toString()
+            } else {
+                val dateId = resources.getIdentifier("tv_top${id + 1}_date", "id", this.packageName)
+                findViewById<TextView>(dateId).text = "Unknown"
+                val scoreId = resources.getIdentifier("tv_top${id + 1}_score", "id", this.packageName)
+                findViewById<TextView>(scoreId).text = "-"
+
+                main_layout.recomputeViewAttributes(findViewById<TextView>(dateId))
+                main_layout.recomputeViewAttributes(findViewById<TextView>(scoreId))
             }
         }
     }
