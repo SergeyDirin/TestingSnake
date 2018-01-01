@@ -176,13 +176,20 @@ class SnakeGame(val height: Int, val width: Int) {
     }
     fun generateNew(cellType: CellType) {
         var loop = true
+        lateinit var p:Point
         while(loop){
-            val p = Point((0..field.size).random(),(0..field[0].size).random())
+            p = Point((0..field.size).random(),(0..field[0].size).random())
             if (field[p.x][p.y] == CellType.EMPTY){
                 loop = false
                 field[p.x][p.y] = cellType
 
             }
+        }
+
+        if (snake.size>0) {
+            scorePerFood = dist(p, snake[0]) + field.size - 1
+        } else {
+            scorePerFood = 13
         }
     }
 
