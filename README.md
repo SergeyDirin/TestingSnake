@@ -1,2 +1,2 @@
-# TestingSnake
-Testing TDD
+# Snake
+A simple snake game
