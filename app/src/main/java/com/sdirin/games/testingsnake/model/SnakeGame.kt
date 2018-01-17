@@ -3,6 +3,7 @@ package com.sdirin.games.testingsnake.model
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
+import java.lang.Math.abs
 import java.util.*
 import kotlin.math.abs
 
@@ -54,22 +55,11 @@ class SnakeGame(val height: Int, val width: Int) {
 
     var snakeDirection = Direction.RIGHT
         set(value) {
-            when (snakeDirection){
-                Direction.TOP -> {
-                    if (value == Direction.DOWN) return
-                }
-                Direction.RIGHT -> {
-                    if (value == Direction.LEFT) return
-                }
-                Direction.DOWN -> {
-                    if (value == Direction.TOP) return
-                }
-                Direction.LEFT -> {
-                    if (value == Direction.RIGHT) return
-                }
-            }
+            if (value == snakeBackDirection) return
             field = value
         }
+
+    var snakeBackDirection = Direction.LEFT
 
     private var snake: MutableList<Point> = mutableListOf()
 
@@ -120,7 +110,12 @@ class SnakeGame(val height: Int, val width: Int) {
         var x = snake[0].x
         var y = snake[0].y
         snake.add(0,Point(x,y))
-
+        snakeBackDirection = when (snakeDirection) {
+            Direction.TOP -> Direction.DOWN
+            Direction.RIGHT -> Direction.LEFT
+            Direction.DOWN -> Direction.TOP
+            Direction.LEFT -> Direction.RIGHT
+        }
         when (snakeDirection) {
             Direction.TOP -> y--
             Direction.RIGHT -> x++
@@ -195,7 +190,7 @@ class SnakeGame(val height: Int, val width: Int) {
 
     fun dist(p1: Point, p2: Point): Int {
         //todo check for not direct dist
-        return abs(p1.x - p2.x) + abs(p1.y - p2.y)
+        return Math.abs(p1.x - p2.x) + Math.abs(p1.y - p2.y)
     }
 
     fun createFood(x:Int, y:Int) {
