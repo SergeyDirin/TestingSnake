@@ -13,6 +13,8 @@ import java.util.Collections.sort
 const val TOP_SCORES = "top_scores"
 const val DATE_KEY = "date_key"
 const val SCORE_KEY = "score_key"
+const val LAST_DATE_KEY = "last_date_key"
+const val LAST_SCORE_KEY = "last_score_key"
 class TopScores(val context: Context) {
 
     //date - score
@@ -37,6 +39,15 @@ class TopScores(val context: Context) {
                     .putInt(SCORE_KEY + i.toString(), data_score.score)
                     .apply()
         }
+        prefs.edit()
+                .putString(LAST_DATE_KEY, reportDate)
+                .putInt(LAST_SCORE_KEY, score)
+                .apply()
+    }
+
+    fun getLastScore():Score{
+        val prefs = context.getSharedPreferences(TOP_SCORES, Context.MODE_PRIVATE)
+        return Score(prefs.getString(LAST_DATE_KEY,"none"),prefs.getInt(LAST_SCORE_KEY,0))
     }
 
     fun getTop():MutableList<Score>{
