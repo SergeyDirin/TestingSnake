@@ -83,7 +83,7 @@ class SnakeGame(val height: Int, val width: Int) {
     var field:Array<Array<CellType>> = Array(width) { Array<CellType>(height,{ CellType.EMPTY }) }
 
     lateinit var onEndGame: ()->Unit
-    lateinit var onEatFood: ()->Unit
+    lateinit var onEatFood: (score: Int)->Unit
 
     private fun checkOutOfField(x: Int, y: Int){
         if (x < 0 || y < 0 || x >= field.size || y >= field[0].size){
@@ -143,7 +143,7 @@ class SnakeGame(val height: Int, val width: Int) {
                 foods ++
                 score += scorePerFood
                 if (this::onEatFood.isInitialized) {
-                    onEatFood()
+                    onEatFood(scorePerFood)
                 }
                 if (foods % foodToObstacle == 0){
                     generateNew(CellType.OBSTACLE)

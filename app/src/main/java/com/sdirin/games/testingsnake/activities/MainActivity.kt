@@ -55,6 +55,7 @@ class MainActivity : AppCompatActivity() {
         gameSpeed = 0
         game_view.game = game
         main_text_container.visibility = View.GONE
+        tv_added_score.visibility = View.GONE
         tv_score.text = "0"
         game_view.invalidate()
         showAnimation()
@@ -68,14 +69,24 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this,GameOverActivity::class.java)
             this@MainActivity.startActivity(intent)
         }
-        game.onEatFood = {
+        game.onEatFood = { score->
             stopGameLoop()
             gameSpeed += 5
             tv_score.text = game.score.toString()
             if (gameSpeed > maxSpeed) gameSpeed = maxSpeed
             skipFirst = true
+            showAddedScore(score)
             startGameLoop()
         }
+    }
+
+    private fun showAddedScore(score: Int) {
+        tv_added_score.text = score.toString()
+        tv_added_score.visibility = View.VISIBLE
+        val handler = Handler()
+        handler.postDelayed({
+            tv_added_score.visibility = View.GONE
+        }, 500)
     }
 
     private fun showAnimation() {
