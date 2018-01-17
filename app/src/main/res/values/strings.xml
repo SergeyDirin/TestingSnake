@@ -11,5 +11,7 @@
     <string name="license_text3">http://www.apache.org/licenses/LICENSE-2.0</string>
     <string name="license_text4">Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.</string>
     <string name="clear">Clear</string>
+    <string name="share_screenshot">Share Screenshot</string>
+    <string name="no_app_available">No App Available</string>
 
 </resources>

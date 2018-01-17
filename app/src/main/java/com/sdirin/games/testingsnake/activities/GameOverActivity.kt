@@ -8,6 +8,16 @@ import android.widget.TextView
 import com.sdirin.games.testingsnake.R
 import com.sdirin.games.testingsnake.utils.TopScores
 import kotlinx.android.synthetic.main.game_over.*
+import android.graphics.Bitmap
+import android.os.Environment
+import android.os.Environment.getExternalStorageDirectory
+import java.io.File
+import java.io.FileOutputStream
+import android.widget.Toast
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.graphics.Matrix
+import android.net.Uri
 
 
 class GameOverActivity : AppCompatActivity() {
@@ -26,6 +36,12 @@ class GameOverActivity : AppCompatActivity() {
         btn_clear.setOnClickListener{
             TopScores(this).clearTop()
             showTop()
+        }
+
+        ib_share.setOnClickListener {
+            val bitmap = getScreenShot(main_layout)
+            store(bitmap, "topScore.png")
+            shareImage(File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Screenshots", "topScore.png"))
         }
 
         showTop()
@@ -66,5 +82,62 @@ class GameOverActivity : AppCompatActivity() {
             tv_current_score.visibility = View.VISIBLE
             tv_current_score.text = lastScore.score.toString()
         }
+    }
+
+    fun getScreenShot(view: View): Bitmap {
+        val screenView = view.rootView
+        screenView.isDrawingCacheEnabled = true
+        val bitmap = Bitmap.createBitmap(screenView.drawingCache)
+        screenView.isDrawingCacheEnabled = false
+        return bitmap
+    }
+    fun store(bm: Bitmap, fileName: String) {
+        val dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Screenshots"
+        val dir = File(dirPath)
+        if (!dir.exists())
+            dir.mkdirs()
+        val file = File(dirPath, fileName)
+        try {
+            val fOut = FileOutputStream(file)
+            val smallBm = getResizedBitmap(bm, bm.width/2,bm.height/2)
+            smallBm.compress(Bitmap.CompressFormat.PNG, 85, fOut)
+            fOut.flush()
+            fOut.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+    private fun shareImage(file: File) {
+        val uri = Uri.fromFile(file)
+        val intent = Intent()
+        intent.action = Intent.ACTION_SEND
+        intent.type = "image/*"
+
+        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "")
+        intent.putExtra(android.content.Intent.EXTRA_TEXT, "")
+        intent.putExtra(Intent.EXTRA_STREAM, uri)
+        try {
+            startActivity(Intent.createChooser(intent, getString(R.string.share_screenshot)))
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(this, getString(R.string.no_app_available), Toast.LENGTH_SHORT).show()
+        }
+
+    }
+
+    fun getResizedBitmap(bm: Bitmap, newWidth: Int, newHeight: Int): Bitmap {
+        val width = bm.width
+        val height = bm.height
+        val scaleWidth = newWidth.toFloat() / width
+        val scaleHeight = newHeight.toFloat() / height
+        // CREATE A MATRIX FOR THE MANIPULATION
+        val matrix = Matrix()
+        // RESIZE THE BIT MAP
+        matrix.postScale(scaleWidth, scaleHeight)
+
+        // "RECREATE" THE NEW BITMAP
+        val resizedBitmap = Bitmap.createBitmap(
+                bm, 0, 0, width, height, matrix, false)
+        bm.recycle()
+        return resizedBitmap
     }
 }
