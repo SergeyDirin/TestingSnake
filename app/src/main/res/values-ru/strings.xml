@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Змея</string>
+    <string name="about_text">Это простая игра с открытым исходным кодом. Проведи черную змею к зеленой еде, преодаливая препятствия на пути.</string>
+    <string name="about">Инфо</string>
+    <string name="git">GitHub</string>
+    <string name="link"><a href="https://github.com/SergeyDirin/TestingSnake">https://github.com/SergeyDirin/TestingSnake</a></string>
+    <string name="license">Лицензия</string>
+    <string name="license_text1">Права защещены 2017 Сергей Дирин</string>
+    <string name="license_text2">"Лицензировано согласно лицензии Apache версии 2.0; Запрещается использование этой программы вне этой лицензии. Копию лицензии можно получить на  "</string>
+    <string name="license_text3">http://www.apache.org/licenses/LICENSE-2.0</string>
+    <string name="license_text4">Если это не предусмотрено действующим законодательством или не согласовано в письменной форме, программное обеспечение, распространяемое по лицензии, распространяется на AS IS BASIS, БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ ИЛИ УСЛОВИЙ ЛЮБОГО ВИДА, как явных, так и подразумеваемых. См. Лицензию на конкретном языке, регулирующем разрешения и ограничения по Лицензии.</string>
+    <string name="clear">Отчистить</string>
+    <string name="share_screenshot">Переслать скриншот</string>
+    <string name="no_app_available">Нет доступного приложения</string>
+</resources>
