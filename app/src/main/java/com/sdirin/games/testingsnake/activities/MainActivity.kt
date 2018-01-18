@@ -244,7 +244,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             game.state = GameState.PAUSED
             main_text_container.visibility = View.VISIBLE
-            tv_main.text = "PAUSED"
+            tv_main.text = getString(R.string.paused)
             safeState()
         }
     }

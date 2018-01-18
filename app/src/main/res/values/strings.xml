@@ -13,5 +13,10 @@
     <string name="clear">Clear</string>
     <string name="share_screenshot">Share Screenshot</string>
     <string name="no_app_available">No App Available</string>
+    <string name="new_game">New Game</string>
+    <string name="unknown">Unknown</string>
+    <string name="top_scores">Top Scores</string>
+    <string name="game_over">Game Over</string>
+    <string name="paused">Paused</string>
 
 </resources>
