@@ -10,8 +10,8 @@ android {
         applicationId "com.sdirin.games.testingsnake"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 5
-        versionName "0.1.0"
+        versionCode 6
+        versionName "0.1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

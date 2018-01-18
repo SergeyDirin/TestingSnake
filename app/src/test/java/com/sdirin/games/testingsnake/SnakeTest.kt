@@ -86,12 +86,13 @@ class SnakeTest {
 
     @Test
     fun moveSnakeBack() {
-        game.createSnake(0,3)
-        game.snakeDirection = Direction.TOP
-        game.snakeDirection = Direction.LEFT
-        game.tick()
-        Assert.assertEquals( CellType.SNAKE_BODY, game.findAt(6,3))
-        Assert.assertEquals(CellType.EMPTY, game.findAt(0,3))
+        //disabled back move
+//        game.createSnake(0,3)
+//        game.snakeDirection = Direction.TOP
+//        game.snakeDirection = Direction.LEFT
+//        game.tick()
+//        Assert.assertEquals( CellType.SNAKE_BODY, game.findAt(6,3))
+//        Assert.assertEquals(CellType.EMPTY, game.findAt(0,3))
     }
 
     @Test
@@ -264,16 +265,13 @@ class SnakeTest {
 
     @Test
     fun checkDecreasingScore(){
-        game.createSnake(3,3)
-        game.snakeDirection = Direction.TOP
-        game.snakeDirection = Direction.LEFT
-        game.createFood(1,1)
+        game.createSnake(4,4)
+        game.snakeDirection = Direction.RIGHT
+        game.createFood(5,0)
         game.tick()
+        game.snakeDirection = Direction.DOWN
         game.tick()
-        game.snakeDirection = Direction.TOP
-        game.tick()
-        game.tick()
-        Assert.assertEquals(7, game.score)
+        Assert.assertEquals(10, game.score)
     }
 
     @Test
