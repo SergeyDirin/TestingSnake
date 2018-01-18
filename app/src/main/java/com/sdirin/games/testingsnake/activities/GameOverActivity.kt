@@ -1,26 +1,30 @@
 package com.sdirin.games.testingsnake.activities
 
+import android.Manifest
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Matrix
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import com.sdirin.games.testingsnake.R
 import com.sdirin.games.testingsnake.utils.TopScores
 import kotlinx.android.synthetic.main.game_over.*
-import android.graphics.Bitmap
-import android.os.Environment
-import android.os.Environment.getExternalStorageDirectory
 import java.io.File
 import java.io.FileOutputStream
-import android.widget.Toast
-import android.content.ActivityNotFoundException
-import android.content.Intent
-import android.graphics.Matrix
-import android.net.Uri
 
 
 class GameOverActivity : AppCompatActivity() {
+
+    private val PERMISSIONS_REQUEST_EXTERNAL_STORAGE = 1;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,12 +43,44 @@ class GameOverActivity : AppCompatActivity() {
         }
 
         ib_share.setOnClickListener {
-            val bitmap = getScreenShot(main_layout)
-            store(bitmap, "topScore.png")
-            shareImage(File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Screenshots", "topScore.png"))
+            val permissionCheck = ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE),
+                    PERMISSIONS_REQUEST_EXTERNAL_STORAGE)
+            } else {
+                createImageAndShare();
+            }
         }
 
         showTop()
+    }
+
+    private fun createImageAndShare(){
+        val bitmap = getScreenShot(main_layout)
+        store(bitmap, "topScore.png")
+        shareImage(File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Screenshots", "topScore.png"))
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int,
+                                            permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            PERMISSIONS_REQUEST_EXTERNAL_STORAGE -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    createImageAndShare();
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+
+                }
+                return
+            }
+            else -> {
+                // Ignore all other requests.
+            }
+        }
     }
 
     fun showTop(){

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Змея</string>
-    <string name="about_text">Это простая игра с открытым исходным кодом. Проведи черную змею к зеленой еде, преодаливая препятствия на пути.</string>
+    <string name="about_text">Это простая игра с открытым исходным кодом. Проведи черную змею к зеленой еде, преодолевая препятствия на пути.</string>
     <string name="about">Инфо</string>
     <string name="git">GitHub</string>
     <string name="link"><a href="https://github.com/SergeyDirin/TestingSnake">https://github.com/SergeyDirin/TestingSnake</a></string>
