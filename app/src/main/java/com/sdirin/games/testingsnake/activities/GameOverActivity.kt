@@ -6,11 +6,11 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Matrix
-import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.TextView
@@ -144,7 +144,7 @@ class GameOverActivity : AppCompatActivity() {
         }
     }
     private fun shareImage(file: File) {
-        val uri = Uri.fromFile(file)
+        val uri = FileProvider.getUriForFile(this, applicationContext.packageName + ".com.sdirin.games.testingsnake.provider", file)
         val intent = Intent()
         intent.action = Intent.ACTION_SEND
         intent.type = "image/*"
@@ -152,6 +152,8 @@ class GameOverActivity : AppCompatActivity() {
         intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "")
         intent.putExtra(android.content.Intent.EXTRA_TEXT, "")
         intent.putExtra(Intent.EXTRA_STREAM, uri)
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
         try {
             startActivity(Intent.createChooser(intent, getString(R.string.share_screenshot)))
         } catch (e: ActivityNotFoundException) {
