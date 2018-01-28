@@ -170,9 +170,14 @@ class MainActivity : AppCompatActivity() {
                 newGame()
 
                 val prefs = getSharedPreferences("game", Context.MODE_PRIVATE)
-                if (prefs.contains(SNAKE_GAME)){
-                    gameSpeed = game.resume(prefs.getString(SNAKE_GAME,"{}"))
-                    tv_score.text = (game.score).toString()
+                try {
+
+                    if (prefs.contains(SNAKE_GAME)){
+                        gameSpeed = game.resume(prefs.getString(SNAKE_GAME,"{}"))
+                        tv_score.text = (game.score).toString()
+                    }
+                } catch (e:Exception){
+                    newGame()
                 }
 
                 controller_view.onDirectionChange = {

@@ -3,9 +3,7 @@ package com.sdirin.games.testingsnake.model
 import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
-import java.lang.Math.abs
 import java.util.*
-import kotlin.math.abs
 
 /**
  * Created by SDirin on 22-Dec-17.
@@ -254,7 +252,11 @@ class SnakeGame(val height: Int, val width: Int) {
         field = Array(width) { Array(height,{ CellType.EMPTY }) }
         for ((x, row) in jfields.withIndex()){
             for ((y, cell) in row.withIndex()){
-                field[x][y]= CellType.fromString(cell)!!
+                if (field.size > x && field[0].size > y){
+                    field[x][y]= CellType.fromString(cell)!!
+                } else {
+
+                }
             }
         }
         snakeDirection = Direction.fromString(jgame[DIR_KEY] as String)!!
